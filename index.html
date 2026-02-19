@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وسابقوا | Wa Sabiqu</title>
+
+    <!-- Fonts: Tajawal (Body), Amiri (Headings), Aref Ruqaa (Reflections) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js & Export Libs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ramadan: {
+                            gold: '#d4af37', // Soft Metallic Gold
+                            dark: '#064e3b', // Deep Emerald
+                            bg: '#f5f5f5',   // White Smoke
+                            surface: '#ffffff',
+                            accent: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        serif: ['Amiri', 'serif'],
+                        hand: ['Aref Ruqaa', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-ramadan-dark text-white shadow-lg sticky top-0 z-50 border-b-4 border-ramadan-gold">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 bg-ramadan-gold rounded-full flex items-center justify-center text-ramadan-dark font-bold text-lg shadow-lg animate-pulse">
+                    🌙</div>
+                <div>
+                    <h1 class="text-xl font-bold font-serif">وسابقوا</h1>
+                </div>
+            </div>
+            <!-- Header Actions -->
+            <div class="flex gap-2 items-center">
+
+                <!-- Auth Container (New) -->
+                <div id="authContainer"></div>
+
+                <div class="w-px h-6 bg-emerald-800/30 mx-1"></div>
+
+                <button id="themeToggleBtn"
+                    class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-colors"
+                    title="الوضع الليلي">
+                    <i class="fa-solid fa-moon text-lg"></i>
+                </button>
+
+                <!-- Trophies (New) -->
+                <!-- Trophies (Diamonds) -->
+                <div class="bg-white/10 text-cyan-300 px-3 py-2 rounded-lg flex items-center gap-2 font-bold font-serif border border-cyan-300/30"
+                    title="عدد الماسات">
+                    <i class="fa-solid fa-gem text-cyan-400 drop-shadow-sm"></i>
+                    <span id="trophyCountDisplay">0</span>
+                </div>
+
+                <button id="showLeaderboardBtn"
+                    class="bg-white/10 hover:bg-white/20 text-yellow-300 p-2 rounded-lg transition-colors relative"
+                    title="لوحة الصدارة">
+                    <i class="fa-solid fa-ranking-star text-lg"></i>
+                </button>
+
+                <button id="toggleEditBtn"
+                    class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-colors group relative"
+                    title="تعديل (حذف)">
+                    <i class="fa-solid fa-pen-to-square text-lg group-[.active]:text-red-400"></i>
+                </button>
+
+                <button id="showAchievementsBtn"
+                    class="bg-white/10 hover:bg-white/20 text-yellow-300 p-2 rounded-lg transition-colors relative"
+                    title="خزانة الأوسمة">
+                    <i class="fa-solid fa-medal text-lg"></i>
+                    <span id="badgeCount"
+                        class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+                <button id="showChartBtn"
+                    class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-colors"
+                    title="تقرير الإنجاز">
+                    <i class="fa-solid fa-chart-line text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Controls Section -->
+    <section class="container mx-auto px-4 mt-6">
+        <div class="bg-white rounded-2xl shadow-md p-5 border border-emerald-50">
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+
+                <!-- Add Day Button -->
+                <button id="addDayBtn"
+                    class="w-full md:w-auto bg-ramadan-dark hover:bg-emerald-800 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95 font-serif text-lg">
+                    <i class="fa-solid fa-plus"></i>
+                    أضف يوم جديد
+                </button>
+
+                <!-- Actions Group -->
+                <div class="flex flex-wrap gap-3 w-full md:w-auto justify-center md:justify-end">
+                    <!-- Exports -->
+                    <button id="exportImageBtn"
+                        class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-image"></i> صورة
+                    </button>
+                    <button id="exportPdfBtn"
+                        class="bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+
+                    <div class="w-px h-8 bg-gray-200 mx-1 hidden md:block"></div>
+
+                    <!-- Config -->
+                    <button id="addCategoryBtn"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+                        <i class="fa-solid fa-layer-group"></i> تصنيف
+                    </button>
+                    <button id="addHabitBtn"
+                        class="bg-ramadan-gold hover:bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
+                        <i class="fa-solid fa-list-check"></i> عادة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grid Content -->
+    <main class="flex-grow container mx-auto px-4 py-6 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 relative flex flex-col max-h-[70vh]"
+            id="captureArea">
+
+            <div class="overflow-auto no-scrollbar" id="gridWrapper">
+                <table class="w-full min-w-[800px]">
+                    <thead class="bg-gray-50 text-gray-600 sticky top-0 z-30 shadow-sm">
+                        <!-- Category Row -->
+                        <tr id="categoryHeaderRow">
+                            <th
+                                class="p-4 w-32 sticky-col bg-gray-100 font-serif text-ramadan-dark text-xl border-b border-gray-200">
+                                الأيام
+                            </th>
+                        </tr>
+                        <!-- Habit Row -->
+                        <tr id="habitHeaderRow" class="text-sm bg-white border-b border-gray-200">
+                            <th class="p-2 sticky-col bg-white border-b border-gray-200"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="daysBody" class="text-gray-700">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState"
+                class="hidden p-12 text-center text-gray-400 m-auto flex flex-col items-center justify-center h-full">
+                <i class="fa-solid fa-mosque text-6xl mb-4 text-emerald-100"></i>
+                <p class="text-xl font-serif">ابدأ رحلتك بإضافة يوم جديد</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar (Mobile Only) -->
+    <nav
+        class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-emerald-900 border-t border-gray-200 dark:border-emerald-800 flex justify-around p-3 z-40 shadow-lg pb-safe">
+        <button onclick="window.scrollTo({top:0, behavior:'smooth'})"
+            class="flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-ramadan-gold dark:hover:text-ramadan-gold">
+            <i class="fa-solid fa-house text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">الرئيسية</span>
+        </button>
+        <button onclick="fetchLeaderboard()"
+            class="flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-ramadan-gold dark:hover:text-ramadan-gold">
+            <i class="fa-solid fa-ranking-star text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">المتصدرين</span>
+        </button>
+        <button id="addDayBtnMobile" onclick="addDay()"
+            class="bg-ramadan-gold text-white w-12 h-12 rounded-full flex items-center justify-center -mt-6 border-4 border-gray-100 dark:border-emerald-900 shadow-xl">
+            <i class="fa-solid fa-plus text-2xl"></i>
+        </button>
+        <button
+            onclick="document.getElementById('achievementsModal').classList.remove('hidden'); renderAchievementsModal();"
+            class="flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-ramadan-gold dark:hover:text-ramadan-gold">
+            <i class="fa-solid fa-medal text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">إنجازاتي</span>
+        </button>
+        <button onclick="document.getElementById('chartModal').classList.remove('hidden'); showChart();"
+            class="flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-ramadan-gold dark:hover:text-ramadan-gold">
+            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">تقرير</span>
+        </button>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="bg-ramadan-dark text-white py-6 mt-auto text-center border-t-4 border-ramadan-gold">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-serif text-ramadan-gold mb-2">" وَقُل رَّبِّ زِدْنِي عِلْمًا "</h2>
+            <p class="text-xs text-emerald-200/60 font-mono dir-ltr">
+                © 2026 | Made with ❤️ and Code by Eng Hassan Rashid
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+
+    <!-- Day Details & Reflection Modal -->
+    <div id="dayDetailsModal"
+        class="fixed inset-0 bg-black/60 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity opacity-0">
+        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]"
+            id="dayDetailsContent">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-ramadan-dark to-emerald-800 p-6 text-white relative flex-shrink-0">
+                <button
+                    class="close-modal absolute top-4 left-4 text-white/70 hover:text-white transition-colors bg-white/10 w-8 h-8 rounded-full flex items-center justify-center">✕</button>
+                <h3 class="text-3xl font-bold font-serif mb-1">ملخص <span id="detailsDayLabel"></span></h3>
+                <div class="flex items-end gap-2">
+                    <span class="text-4xl font-bold text-ramadan-gold" id="detailsPercentage">0%</span>
+                    <span class="text-emerald-200 text-sm mb-2">إنجاز</span>
+                </div>
+                <div class="w-full bg-emerald-900/50 h-2 rounded-full mt-4 overflow-hidden">
+                    <div id="detailsProgressBar"
+                        class="bg-ramadan-gold h-full rounded-full transition-all duration-1000" style="width: 0%">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 overflow-y-auto flex-grow">
+                <!-- Reflection -->
+                <div class="mb-6">
+                    <label class="block text-emerald-800 font-bold mb-2 font-serif text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-pen-nib"></i> خاطرتي لهذا اليوم
+                    </label>
+                    <div class="relative group">
+                        <textarea id="reflectionInput" rows="3"
+                            class="w-full p-3 rounded-xl glass-input outline-none transition-all font-hand text-xl text-gray-700 placeholder-emerald-200/50 resize-none focus:ring-2 focus:ring-ramadan-gold"
+                            placeholder="اكتب خواطرك، تدبرك لآية، أو شعورك اليوم..."></textarea>
+                        <div class="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fa-solid fa-feather text-emerald-200"></i>
+                        </div>
+                    </div>
+                    <button id="saveReflectionBtn"
+                        class="mt-2 w-full py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-lg text-sm font-bold transition-colors font-serif">
+                        <i class="fa-solid fa-save"></i> حفظ الخاطرة
+                    </button>
+                    <p id="saveFeedback" class="text-center text-xs text-emerald-600 mt-1 opacity-0 transition-opacity">
+                        تم الحفظ بنجاح!</p>
+                </div>
+
+                <!-- Habits List -->
+                <div class="mb-4">
+                    <h4 class="text-emerald-800 font-bold mb-2 flex items-center gap-2 font-serif">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> تم إنجازه
+                    </h4>
+                    <ul id="detailsCompletedList" class="space-y-2 text-sm text-gray-600 pr-2"></ul>
+                </div>
+
+                <div>
+                    <h4 class="text-gray-500 font-bold mb-2 flex items-center gap-2 font-serif">
+                        <i class="fa-regular fa-circle text-gray-400"></i> قيد الانتظار
+                    </h4>
+                    <ul id="detailsPendingList" class="space-y-2 text-sm text-gray-400 pr-2"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal"
+        class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <h3 class="font-bold text-lg mb-4 font-serif">إضافة تصنيف جديد</h3>
+            <input type="text" id="newCategoryInput" placeholder="اسم التصنيف"
+                class="w-full border p-2 rounded-lg mb-4 focus:ring-2 ring-emerald-500 outline-none">
+            <div class="flex gap-2">
+                <button id="saveCategoryBtn"
+                    class="flex-1 bg-ramadan-dark text-white py-2 rounded-lg font-bold">حفظ</button>
+                <button onclick="document.getElementById('categoryModal').classList.add('hidden')"
+                    class="flex-1 bg-gray-200 py-2 rounded-lg">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Habit Modal -->
+    <div id="habitModal"
+        class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <h3 class="font-bold text-lg mb-4 font-serif">إضافة عادة جديدة</h3>
+            <input type="text" id="newHabitInput" placeholder="اسم العادة"
+                class="w-full border p-2 rounded-lg mb-3 focus:ring-2 ring-emerald-500 outline-none">
+            <select id="newHabitCategorySelect" class="w-full border p-2 rounded-lg mb-4 bg-white"></select>
+            <div class="flex gap-2">
+                <button id="saveHabitBtn"
+                    class="flex-1 bg-ramadan-dark text-white py-2 rounded-lg font-bold">حفظ</button>
+                <button onclick="document.getElementById('habitModal').classList.add('hidden')"
+                    class="flex-1 bg-gray-200 py-2 rounded-lg">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Modal -->
+    <div id="chartModal"
+        class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl">
+            <div class="bg-ramadan-dark p-4 flex justify-between text-white">
+                <h3 class="font-bold font-serif text-lg">تقرير الإنجاز</h3>
+                <button onclick="document.getElementById('chartModal').classList.add('hidden')"
+                    class="w-6 h-6 bg-white/10 rounded-full flex items-center justify-center">✕</button>
+            </div>
+            <div class="p-4 h-[400px]">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div id="achievementsModal"
+        class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div
+                class="bg-gradient-to-r from-ramadan-dark to-emerald-900 p-5 flex justify-between text-white flex-shrink-0">
+                <h3 class="font-bold font-serif text-xl flex items-center gap-2"><i class="fa-solid fa-medal"></i> خزانة
+                    الأوسمة</h3>
+                <button onclick="document.getElementById('achievementsModal').classList.add('hidden')"
+                    class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20">✕</button>
+            </div>
+            <div class="p-6 overflow-y-auto bg-gray-50 flex-grow">
+                <div id="achievementsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Cards -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal (NEW) -->
+    <div id="leaderboardModal"
+        class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-cyan-800 to-blue-900 p-5 flex justify-between text-white flex-shrink-0">
+                <h3 class="font-bold font-serif text-xl flex items-center gap-2"><i
+                        class="fa-solid fa-ranking-star"></i> لوحة الصدارة</h3>
+                <button onclick="document.getElementById('leaderboardModal').classList.add('hidden')"
+                    class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20">✕</button>
+            </div>
+
+            <!-- List -->
+            <div class="p-4 overflow-y-auto bg-gray-50 flex-grow relative">
+                <div id="leaderboardLoading"
+                    class="absolute inset-0 bg-white/80 z-10 flex items-center justify-center hidden">
+                    <i class="fa-solid fa-circle-notch fa-spin text-cyan-600 text-2xl"></i>
+                </div>
+                <div id="leaderboardList" class="space-y-3">
+                    <!-- Items -->
+                </div>
+            </div>
+
+            <!-- Footer Rule -->
+            <div class="bg-gray-100 p-3 text-center border-t border-gray-200">
+                <p class="text-[10px] text-gray-500 font-bold">1 ماسة = إتمام يوم كامل 100%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link App JS -->
+    <script type="module" src="app.js"></script>
+
+    <!-- Confirmation Modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm"
+            onclick="window.closeDeleteConfirm()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md border-t-4 border-red-500">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start sm:flex-row-reverse">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:mr-4 mb-4 sm:mb-0">
+                                <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:mr-4 sm:mt-0 sm:text-right flex-1">
+                                <h3 class="text-xl font-bold font-serif leading-6 text-gray-900" id="deleteModalTitle">
+                                    تأكيد الحذف</h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500 font-sans" id="deleteModalMessage">هل أنت متأكد؟</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                        <button type="button" id="confirmDeleteBtn"
+                            class="inline-flex w-full justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-bold text-white shadow-sm hover:bg-red-500 sm:w-auto transition-colors">
+                            نعم، احذف
+                        </button>
+                        <button type="button" onclick="window.closeDeleteConfirm()"
+                            class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-colors">
+                            إلغاء
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+```

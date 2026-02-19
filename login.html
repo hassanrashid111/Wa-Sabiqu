@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | وسابقوا</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ramadan: {
+                            gold: '#d4af37',
+                            dark: '#064e3b',
+                            bg: '#f5f5f5',
+                            accent: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                        serif: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-pattern min-h-screen flex flex-col font-sans text-gray-800">
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+
+        <div
+            class="glass-card w-full max-w-md p-8 rounded-3xl relative overflow-hidden transition-all duration-500 hover:shadow-2xl">
+
+            <!-- Decorative Top Bloom -->
+            <div
+                class="absolute -top-10 -right-10 w-32 h-32 bg-ramadan-gold/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-10 -left-10 w-32 h-32 bg-ramadan-dark/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+
+            <!-- Header / Logo -->
+            <div class="text-center mb-8 relative z-10">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 bg-ramadan-dark rounded-full shadow-lg mb-4 animate-bounce">
+                    <span class="text-3xl">🌙</span>
+                </div>
+                <h1 class="text-3xl font-bold font-serif text-ramadan-dark">مرحباً بعودتك</h1>
+                <p class="text-gray-500 mt-2 text-sm">سجّل دخولك لمتابعة إنجازاتك في "وسابقوا"</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-5 relative z-10">
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2 text-sm" for="email">البريد الإلكتروني</label>
+                    <div class="relative">
+                        <span class="absolute right-3 top-3 text-gray-400"><i class="fa-solid fa-envelope"></i></span>
+                        <input type="email" id="email"
+                            class="glass-input w-full py-3 pr-10 pl-4 rounded-xl outline-none focus:ring-2 focus:ring-ramadan-gold transition-all text-gray-700"
+                            placeholder="example@mail.com" required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-gray-700 font-bold text-sm" for="password">كلمة المرور</label>
+                        <a href="#" class="text-xs text-ramadan-gold hover:text-yellow-600 transition-colors">نسيت كلمة
+                            المرور؟</a>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute right-3 top-3 text-gray-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="password"
+                            class="glass-input w-full py-3 pr-10 pl-4 rounded-xl outline-none focus:ring-2 focus:ring-ramadan-gold transition-all text-gray-700"
+                            placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-ramadan-dark to-emerald-800 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-emerald-900/30 hover:scale-[1.02] transition-all duration-300 font-serif text-lg">
+                    تسجيل الدخول
+                </button>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 my-6 relative z-10">
+                <div class="h-px bg-gray-300 flex-1"></div>
+                <span class="text-gray-400 text-sm">أو</span>
+                <div class="h-px bg-gray-300 flex-1"></div>
+            </div>
+
+            <!-- Social Login -->
+            <div class="grid grid-cols-2 gap-4 relative z-10">
+                <button
+                    class="google-login-btn flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white/50">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                    <span class="text-sm font-semibold text-gray-600">Google</span>
+                </button>
+                <button
+                    class="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white/50">
+                    <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" class="w-5 h-5" alt="Facebook">
+                    <span class="text-sm font-semibold text-gray-600">Facebook</span>
+                </button>
+            </div>
+
+            <!-- Footer Link -->
+            <div class="text-center mt-6 relative z-10">
+                <p class="text-sm text-gray-600">
+                    ليس لديك حساب؟
+                    <a href="signup.html"
+                        class="text-ramadan-dark font-bold hover:text-emerald-600 transition-colors">أنشئ حساباً
+                        جديداً</a>
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- App Footer -->
+    <footer class="bg-ramadan-dark text-white py-6 text-center border-t-4 border-ramadan-gold z-10 relative">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-serif text-ramadan-gold mb-2">" وَقُل رَّبِّ زِدْنِي عِلْمًا "</h2>
+            <p class="text-xs text-emerald-200/60 font-mono dir-ltr">
+                © 2026 | Made with ❤️ and Code by Eng Hassan Rashid
+            </p>
+        </div>
+    </footer>
+
+    <!-- Link App JS -->
+    <script type="module" src="app.js"></script>
+
+</body>
+
+</html>

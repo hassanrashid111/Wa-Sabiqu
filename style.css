@@ -1,0 +1,240 @@
+/* Wa Sabiqu - Custom Styles */
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+    font-family: 'Amiri', serif;
+}
+
+.font-hand {
+    font-family: 'Aref Ruqaa', serif;
+}
+
+/* Sticky First Column */
+.sticky-col {
+    position: sticky;
+    right: 0;
+    z-index: 20;
+    background-color: #ffffff;
+    border-left: 1px solid #e5e7eb;
+}
+
+/* Hide Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Smooth Transitions */
+.transition-all-300 {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Glassmorphism */
+.glass-input {
+    background: rgba(236, 253, 245, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px 0 rgba(6, 78, 59, 0.05);
+}
+
+/* Custom Table Borders */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* --- Achievements Styles --- */
+.badge-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.badge-locked {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transform: scale(0.95);
+}
+
+.badge-unlocked {
+    filter: grayscale(0%);
+    opacity: 1;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: #d4af37;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.badge-unlocked:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.bg-pattern {
+    background-color: #f8fafc;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23064e3b' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- Trophy/Toast --- */
+.trophy-toast-visible {
+    transform: translate(-50%, -20px) !important;
+    opacity: 1 !important;
+}
+
+/* --- DARK MODE OVERRIDES --- */
+.dark body {
+    background-color: #022c22;
+    color: #e2e8f0;
+}
+
+/* Deep Night Emerald */
+.dark .bg-white {
+    background-color: #064e3b;
+}
+
+/* Card Bg */
+.dark .text-gray-800 {
+    color: #f1f5f9;
+}
+
+.dark .text-gray-600 {
+    color: #cbd5e1;
+}
+
+.dark .text-gray-500 {
+    color: #94a3b8;
+}
+
+.dark .bg-gray-50 {
+    background-color: #065f46;
+}
+
+/* Slightly lighter emerald */
+.dark .border-gray-200 {
+    border-color: #047857;
+}
+
+.dark .border-gray-100 {
+    border-color: #065f46;
+}
+
+.dark .sticky-col {
+    background-color: #064e3b;
+    border-left-color: #047857;
+    color: #e2e8f0;
+}
+
+.dark .glass-card {
+    background: rgba(6, 78, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass-input {
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.dark .bg-pattern {
+    background-color: #022c22;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --- MOBILE CARD VIEW (Responsive Table) --- */
+@media (max-width: 768px) {
+
+    /* Hide Table Headers */
+    thead {
+        display: none;
+    }
+
+    table,
+    tbody,
+    tr,
+    td,
+    th {
+        display: block;
+        width: 100%;
+    }
+
+    tr {
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark tr {
+        background: #064e3b;
+        border-color: #047857;
+    }
+
+    /* First Cell (Day Logic) */
+    td.sticky-col {
+        position: static;
+        background: #f0fdf4;
+        /* Light Emerald */
+        border-bottom: 2px solid #d1fae5;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .dark td.sticky-col {
+        background: #065f46;
+        border-bottom-color: #047857;
+        color: white;
+    }
+
+    /* Habit Cells */
+    td:not(.sticky-col) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        text-align: right;
+    }
+
+    .dark td:not(.sticky-col) {
+        border-bottom-color: #064e3b;
+    }
+
+    /* Add Label via Data Attribute (JS needs to inject this) */
+    td:not(.sticky-col)::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #4b5563;
+        font-size: 0.875rem;
+    }
+
+    .dark td:not(.sticky-col)::before {
+        color: #94a3b8;
+    }
+
+    /* Cell Interaction Area */
+    td:not(.sticky-col)>div {
+        width: auto;
+        height: auto;
+    }
+}
