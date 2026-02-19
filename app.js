@@ -985,58 +985,101 @@ function renderLeaderboard(users) {
     });
 }
 
+/* --- Sidebar Logic --- */
+function openSidebar() {
+    const sidebar = document.getElementById('sidebarDrawer');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar || !overlay) return;
+
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+        overlay.classList.add('opacity-100');
+        sidebar.classList.remove('translate-x-full');
+    }, 10);
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebarDrawer');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (!sidebar || !overlay) return;
+
+    sidebar.classList.add('translate-x-full');
+    overlay.classList.remove('opacity-100');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebarDrawer');
+    if (!sidebar) return;
+    const isOpen = !sidebar.classList.contains('translate-x-full');
+    if (isOpen) closeSidebar();
+    else openSidebar();
+}
+
+window.toggleSidebar = toggleSidebar;
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
+
 function setupEvents() {
     const addDayBtn = document.getElementById('addDayBtn');
     if (addDayBtn) addDayBtn.addEventListener('click', addDay);
 
-    const catModal = document.getElementById('categoryModal');
-    const addCatBtn = document.getElementById('addCategoryBtn');
-    if (addCatBtn) addCatBtn.addEventListener('click', () => catModal.classList.remove('hidden'));
+    // Sidebar Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) menuBtn.addEventListener('click', openSidebar);
 
+    const overlay = document.getElementById('sidebarOverlay');
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+
+    // Sidebar Actions
+    const sbAddHabit = document.getElementById('sidebarAddHabitBtn');
+    if (sbAddHabit) sbAddHabit.addEventListener('click', () => {
+        closeSidebar();
+        const select = document.getElementById('newHabitCategorySelect');
+        select.innerHTML = '';
+        AppState.categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.id;
+            opt.textContent = cat.name;
+            select.appendChild(opt);
+        });
+        document.getElementById('habitModal').classList.remove('hidden');
+    });
+
+    const sbAddCategory = document.getElementById('sidebarAddCategoryBtn');
+    if (sbAddCategory) sbAddCategory.addEventListener('click', () => { closeSidebar(); document.getElementById('categoryModal').classList.remove('hidden'); });
+
+    const sbToggleEdit = document.getElementById('sidebarToggleEditBtn');
+    if (sbToggleEdit) sbToggleEdit.addEventListener('click', () => { closeSidebar(); toggleEditMode(); });
+
+    const sbExportImg = document.getElementById('sidebarExportImgBtn');
+    if (sbExportImg) sbExportImg.addEventListener('click', () => { closeSidebar(); exportToImage(); });
+
+    const sbExportPdf = document.getElementById('sidebarExportPdfBtn');
+    if (sbExportPdf) sbExportPdf.addEventListener('click', () => { closeSidebar(); exportToPDF(); });
+
+    // Modals
     const saveCatBtn = document.getElementById('saveCategoryBtn');
-    if (saveCatBtn) saveCatBtn.addEventListener('click', () => { const name = document.getElementById('newCategoryInput').value.trim(); if (name) { addCategory(name); document.getElementById('newCategoryInput').value = ''; catModal.classList.add('hidden'); } });
-
-    const habitModal = document.getElementById('habitModal');
-    const habitSelect = document.getElementById('newHabitCategorySelect');
-    const addHabitBtn = document.getElementById('addHabitBtn');
-    if (addHabitBtn) addHabitBtn.addEventListener('click', () => { habitSelect.innerHTML = AppState.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); habitModal.classList.remove('hidden'); });
+    if (saveCatBtn) saveCatBtn.addEventListener('click', () => {
+        const name = document.getElementById('newCategoryInput').value;
+        if (name) { addCategory(name); document.getElementById('categoryModal').classList.add('hidden'); document.getElementById('newCategoryInput').value = ''; }
+    });
 
     const saveHabitBtn = document.getElementById('saveHabitBtn');
-    if (saveHabitBtn) saveHabitBtn.addEventListener('click', () => { const name = document.getElementById('newHabitInput').value.trim(); const catId = habitSelect.value; if (name && catId) { addHabit(name, catId); document.getElementById('newHabitInput').value = ''; habitModal.classList.add('hidden'); } });
+    if (saveHabitBtn) saveHabitBtn.addEventListener('click', () => {
+        const name = document.getElementById('newHabitInput').value;
+        const catId = document.getElementById('newHabitCategorySelect').value;
+        if (name && catId) { addHabit(name, catId); document.getElementById('habitModal').classList.add('hidden'); document.getElementById('newHabitInput').value = ''; }
+    });
 
-    const saveReflectBtn = document.getElementById('saveReflectionBtn');
-    if (saveReflectBtn) saveReflectBtn.addEventListener('click', saveReflection);
+    const saveReflectionBtn = document.getElementById('saveReflectionBtn');
+    if (saveReflectionBtn) saveReflectionBtn.addEventListener('click', saveReflection);
 
-    document.querySelectorAll('.close-modal').forEach(btn => { btn.addEventListener('click', (e) => { const modal = e.target.closest('.fixed'); closeModalAnimation(modal); }); });
-
-    const showChartBtn = document.getElementById('showChartBtn');
-    if (showChartBtn) showChartBtn.addEventListener('click', showChart);
-
-    const showBadgeBtn = document.getElementById('showAchievementsBtn');
-    if (showBadgeBtn) showBadgeBtn.addEventListener('click', () => { renderAchievementsModal(); document.getElementById('achievementsModal').classList.remove('hidden'); });
-
-    // Leaderboard Btn
-    const leaderboardBtn = document.getElementById('showLeaderboardBtn');
-    if (leaderboardBtn) leaderboardBtn.addEventListener('click', fetchLeaderboard);
-
-    // Theme Btn
-    const themeBtn = document.getElementById('themeToggleBtn');
-    if (themeBtn) themeBtn.addEventListener('click', toggleDarkMode);
-
-    const exportImgBtn = document.getElementById('exportImageBtn');
-    if (exportImgBtn) exportImgBtn.addEventListener('click', exportToImage);
-
-    // Global Expose
-    window.fetchLeaderboard = fetchLeaderboard;
-    window.renderRows = renderRows; // Expose for fallback logic
-    // NEW EVENTS
-    const toggleEdit = document.getElementById('toggleEditBtn');
-    if (toggleEdit) toggleEdit.addEventListener('click', toggleEditMode);
-
-    const confirmDelete = document.getElementById('confirmDeleteBtn');
-    if (confirmDelete) confirmDelete.addEventListener('click', () => {
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', () => {
         if (confirmCallback) { confirmCallback(); window.closeDeleteConfirm(); }
     });
+
 }
 function closeModalAnimation(modal) { modal.classList.add('opacity-0'); const content = modal.querySelector('div[class*="scale"]'); if (content) { content.classList.add('scale-95'); content.classList.remove('scale-100'); } setTimeout(() => modal.classList.add('hidden'), 300); }
 function navRemoveSiblings(node) { while (node && node.nextSibling) { node.nextSibling.remove(); } }
