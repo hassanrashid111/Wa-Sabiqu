@@ -318,27 +318,54 @@ window.logoutApp = logoutApp;
 
 /* --- UI Rendering --- */
 function renderAuthUI() {
+    // Header Auth Container (Hidden on mobile or just icon?)
+    // Actually sidebar handles it now for mobile. 
+    // Let's keep specific logic for Sidebar Profile Injection called 'sidebarProfileContainer'
+
+    // 1. Sidebar Profile
+    const sidebarProfile = document.getElementById('sidebarProfileContainer');
+    if (sidebarProfile) {
+        if (AppState.user) {
+            const photo = AppState.user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(AppState.user.displayName || 'User') + '&background=0D9488&color=fff';
+            sidebarProfile.innerHTML = `
+               <img src="${photo}" class="w-16 h-16 rounded-full border-4 border-white/10 mb-3 shadow-lg object-cover" alt="User">
+               <h3 class="text-white font-serif font-bold text-lg">${AppState.user.displayName}</h3>
+               <button onclick="logoutApp()" class="text-xs text-red-300 hover:text-red-100 font-bold mt-2 border border-red-500/30 px-3 py-1 rounded-full bg-red-500/10 transition-colors">
+                   <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج
+               </button>
+            `;
+        } else {
+            sidebarProfile.innerHTML = `
+               <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-3 border-2 border-white/5 border-dashed text-white/30">
+                   <i class="fa-solid fa-user text-2xl"></i>
+               </div>
+               <div class="flex flex-col gap-2 w-full px-8">
+                   <a href="login.html" class="w-full bg-ramadan-gold text-ramadan-dark text-center py-2 rounded-lg font-bold text-sm hover:bg-yellow-500 transition-colors">دخول</a>
+                   <a href="signup.html" class="w-full bg-white/10 text-white text-center py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-colors">حساب جديد</a>
+               </div>
+            `;
+        }
+    }
+
+    // 2. Header Mini Auth (Optional, usually hidden if using drawer OR shown as mini icon)
+    // We kept 'authContainer' in header. Let's update it to be just a mini avatar or hidden on small screens?
     const container = document.getElementById('authContainer');
     if (!container) return;
 
+    // Only show on Desktop? Or keep consistent.
     if (AppState.user) {
         const photo = AppState.user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(AppState.user.displayName || 'User') + '&background=0D9488&color=fff';
         container.innerHTML = `
-            <div class="flex items-center gap-2 bg-emerald-800/50 rounded-full pr-1 pl-3 py-1 border border-emerald-600/30">
-                <img src="${photo}" class="w-8 h-8 rounded-full border-2 border-amber-300" alt="User" title="${AppState.user.displayName}">
-                <button onclick="logoutApp()" class="text-xs text-emerald-100 hover:text-white transition-colors font-bold" title="تسجيل الخروج">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
+            <div class="hidden md:flex items-center gap-2 bg-emerald-800/50 rounded-full pr-1 pl-3 py-1 border border-emerald-600/30 cursor-pointer" onclick="toggleSidebar()">
+                <img src="${photo}" class="w-8 h-8 rounded-full border-2 border-amber-300" alt="User">
+                <span class="text-xs text-emerald-100 font-bold truncate max-w-[80px]">${AppState.user.displayName}</span>
             </div>
         `;
     } else {
         container.innerHTML = `
-            <div class="flex gap-2">
+            <div class="hidden md:flex gap-2">
                 <a href="login.html" class="bg-ramadan-gold text-ramadan-dark px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-yellow-500 transition-colors flex items-center gap-2 shadow-sm">
                     <span>دخول</span>
-                </a>
-                <a href="signup.html" class="bg-white/10 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-white/20 transition-colors hidden md:block">
-                    <span>جديد</span>
                 </a>
             </div>
         `;
@@ -531,16 +558,39 @@ function saveReflection() {
 
 function toggleEditMode() {
     AppState.isEditMode = !AppState.isEditMode;
+
+    // Header Btn
     const btn = document.getElementById('toggleEditBtn');
-    if (AppState.isEditMode) {
-        btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
-        btn.classList.remove('bg-white/10', 'hover:bg-white/20');
-        btn.querySelector('i').className = 'fa-solid fa-check text-lg'; // Change icon to Check/Done
-    } else {
-        btn.classList.remove('bg-red-500', 'hover:bg-red-600');
-        btn.classList.add('bg-white/10', 'hover:bg-white/20');
-        btn.querySelector('i').className = 'fa-solid fa-pen-to-square text-lg';
+    if (btn) {
+        if (AppState.isEditMode) {
+            btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600');
+            btn.classList.remove('bg-white/10', 'hover:bg-white/20');
+            btn.querySelector('i').className = 'fa-solid fa-check text-lg';
+        } else {
+            btn.classList.remove('bg-red-500', 'hover:bg-red-600');
+            btn.classList.add('bg-white/10', 'hover:bg-white/20');
+            btn.querySelector('i').className = 'fa-solid fa-pen-to-square text-lg';
+        }
     }
+
+    // Sidebar Btn
+    const sbBtn = document.getElementById('sidebarToggleEditBtn');
+    if (sbBtn) {
+        const span = sbBtn.querySelector('span:first-child');
+        const text = sbBtn.querySelector('span:last-child');
+        if (AppState.isEditMode) {
+            span.classList.remove('group-hover:bg-red-500');
+            span.classList.add('bg-red-500', 'text-white');
+            text.textContent = 'إيقاف التعديل';
+            text.classList.add('text-red-400');
+        } else {
+            span.classList.add('group-hover:bg-red-500');
+            span.classList.remove('bg-red-500', 'text-white');
+            text.textContent = 'وضع التعديل';
+            text.classList.remove('text-red-400');
+        }
+    }
+
     renderApp();
 }
 
