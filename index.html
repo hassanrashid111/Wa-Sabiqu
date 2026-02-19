@@ -60,18 +60,29 @@
     <header class="bg-ramadan-dark text-white shadow-lg sticky top-0 z-50 border-b-4 border-ramadan-gold">
         <div class="container mx-auto px-4 py-2 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div
-                    class="w-8 h-8 bg-ramadan-gold rounded-full flex items-center justify-center text-ramadan-dark font-bold text-lg shadow-lg animate-pulse">
-                    🌙</div>
-                <div>
-                    <h1 class="text-xl font-bold font-serif">وسابقوا</h1>
+                <!-- Hamburger Menu -->
+                <button id="menuBtn" class="text-white hover:text-ramadan-gold transition-colors p-1">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+
+                <div class="w-px h-6 bg-emerald-800/30 mx-1"></div>
+
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 bg-ramadan-gold rounded-full flex items-center justify-center text-ramadan-dark font-bold text-lg shadow-lg animate-pulse">
+                        🌙</div>
+                    <h1 class="text-xl font-bold font-serif hidden md:block">وسابقوا</h1>
                 </div>
             </div>
+
             <!-- Header Actions -->
             <div class="flex gap-2 items-center">
-
-                <!-- Auth Container (New) -->
-                <div id="authContainer"></div>
+                <!-- Trophies (Diamonds) -->
+                <div class="bg-white/10 text-cyan-300 px-3 py-1.5 rounded-lg flex items-center gap-2 font-bold font-serif border border-cyan-300/30 shadow-inner"
+                    title="عدد الماسات">
+                    <i class="fa-solid fa-gem text-cyan-400 drop-shadow-sm text-sm"></i>
+                    <span id="trophyCountDisplay" class="text-sm">0</span>
+                </div>
 
                 <div class="w-px h-6 bg-emerald-800/30 mx-1"></div>
 
@@ -80,35 +91,91 @@
                     title="الوضع الليلي">
                     <i class="fa-solid fa-moon text-lg"></i>
                 </button>
-
-                <!-- Trophies (New) -->
-                <!-- Trophies (Diamonds) -->
-                <div class="bg-white/10 text-cyan-300 px-3 py-2 rounded-lg flex items-center gap-2 font-bold font-serif border border-cyan-300/30"
-                    title="عدد الماسات">
-                    <i class="fa-solid fa-gem text-cyan-400 drop-shadow-sm"></i>
-                    <span id="trophyCountDisplay">0</span>
-                </div>
-
-                <button id="showLeaderboardBtn"
-                    class="bg-white/10 hover:bg-white/20 text-yellow-300 p-2 rounded-lg transition-colors relative"
-                    title="لوحة الصدارة">
-                    <i class="fa-solid fa-ranking-star text-lg"></i>
-                </button>
-
-                <button id="toggleEditBtn"
-                    class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-colors group relative"
-                    title="تعديل (حذف)">
-                    <i class="fa-solid fa-pen-to-square text-lg group-[.active]:text-red-400"></i>
-                </button>
-
-                <button id="showChartBtn"
-                    class="bg-white/10 hover:bg-white/20 text-white p-2 rounded-lg transition-colors"
-                    title="تقرير الإنجاز">
-                    <i class="fa-solid fa-chart-line text-lg"></i>
-                </button>
             </div>
         </div>
     </header>
+
+    <!-- Sidebar Drawer -->
+    <!-- Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-[60] hidden opacity-0 transition-opacity duration-300">
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebarDrawer"
+        class="fixed top-0 right-0 h-full w-80 bg-ramadan-dark text-white z-[70] transform translate-x-full transition-transform duration-300 shadow-2xl flex flex-col font-sans overflow-hidden border-l border-white/10">
+
+        <!-- Sidebar Header / Profile -->
+        <div class="p-6 bg-emerald-900/50 flex flex-col items-center justify-center border-b border-white/5 relative">
+            <button onclick="toggleSidebar()"
+                class="absolute top-4 left-4 text-white/50 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="sidebarProfileContainer" class="flex flex-col items-center w-full">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="flex-grow overflow-y-auto p-4 space-y-2">
+
+            <div class="text-xs font-bold text-emerald-400/70 uppercase tracking-wider mb-2 px-2">الإعدادات</div>
+
+            <button id="sidebarAddHabitBtn"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group text-right">
+                <div
+                    class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 text-emerald-400">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <span class="font-bold text-gray-200 group-hover:text-white">إضافة عادة جديدة</span>
+            </button>
+
+            <button id="sidebarAddCategoryBtn"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group text-right">
+                <div
+                    class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 text-blue-400">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <span class="font-bold text-gray-200 group-hover:text-white">إضافة تصنيف جديد</span>
+            </button>
+
+            <button id="sidebarToggleEditBtn"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group text-right">
+                <span
+                    class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 text-red-400 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </span>
+                <span class="font-bold text-gray-200 group-hover:text-white">وضع التعديل</span>
+            </button>
+
+            <div class="h-px bg-white/5 my-2"></div>
+            <div class="text-xs font-bold text-emerald-400/70 uppercase tracking-wider mb-2 px-2">التصدير والمشاركة
+            </div>
+
+            <button id="sidebarExportImgBtn"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group text-right">
+                <div
+                    class="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 text-purple-400">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+                <span class="font-bold text-gray-200 group-hover:text-white">حفظ كصورة</span>
+            </button>
+
+            <button id="sidebarExportPdfBtn"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-all group text-right">
+                <div
+                    class="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center group-hover:bg-rose-500/20 text-rose-400">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <span class="font-bold text-gray-200 group-hover:text-white">حفظ كملف PDF</span>
+            </button>
+
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 bg-black/20 text-center">
+            <p class="text-[10px] text-emerald-400/50 font-mono">Wa Sabiqu App v11.0</p>
+        </div>
+    </div>
 
     <!-- Grid Content -->
     <main class="flex-grow container mx-auto px-4 py-6 overflow-hidden pb-32 md:pb-6">
